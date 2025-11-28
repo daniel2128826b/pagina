@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>¡Feliz Cumpleaños Yera! 🎈🎁</title>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.1/dist/confetti.browser.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mystery+Quest&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Delius&family=Mystery+Quest&display=swap" rel="stylesheet">
+    <style>
+        /* -------------------------------------------------------------------------- */
+        /* --- ESTILOS BASE Y CORRECCIÓN DE INTERACCIÓN --- */
+        /* -------------------------------------------------------------------------- */
+        body {
+            background-image: url("fondo3.jpg");
+            min-height: 100vh;
+            margin: 0; 
+            overflow: hidden; 
+            position: relative; 
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+pre{ font-family: "mistery quest";}
+        h1 {
+            font-size: 40px;
+            font-family:"mystery quest";
+            text-align: center;
+            color: #333;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 50; 
+        }
+
+        /* --- SECCIÓN DE GLOBOS (Fondo interactivo) --- */
+        #balloon-section {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: auto; /* Permite interacción con los globos */
+            opacity: 1; 
+            z-index: 1; 
+        }
+        
+        /* --- SECCIÓN DEL REGALO (Solo para contenedor visual, **no** debe capturar clics) --- */
+        #gift-section {
+            background-color: transparent; 
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            z-index: 10; 
+            /* CORRECCIÓN: Deshabilitar puntero en el contenedor principal */
+            pointer-events: none; 
+        }
+
+        /* --- CONTENEDOR DEL REGALO (Único elemento interactivo en #gift-section) --- */
+        .regalo {
+            cursor: pointer;
+            transition: transform 0.3s ease-out;
+            position: relative; 
+            margin-top: 50px; 
+            /* CORRECCIÓN: Habilitar puntero solo en esta área */
+            pointer-events: auto; 
+        }
+        .regalo:active {
+            transform: scale(0.99);
+        }
+        #gift-message-card {
+            max-width: 95%;
+            width: 300px; 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -100%); 
+            background-color: rgba(255, 255, 255, 0.99); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 20; 
+            font-size: 0.9em; 
+            pointer-events: none; /* Asegura que el mensaje no bloquee clics */
+        }
+        #gift-message-card .card-title {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        #gift-message-card .card-text {
+            font-size: 0.9em;
+        }
+        #gift-message-card img {
+            max-width: 80px; 
+        }
+        p{
+            font-size: 12px;
+            font-family:delius ;
+        }
+
+        /* --- ESTILOS DE LOS GLOBOS (Se mantienen igual) --- */
+        .balloon-container { position: absolute; transform-origin: center center; pointer-events: auto; cursor: pointer; transform: scale(0.3); z-index: 1; }
+        .balloon { width: 200px; height: 250px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; position: relative; box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5), inset -10px -10px 15px rgba(0, 0, 0, 0.2); z-index: 10; }
+        .knot { width: 20px; height: 20px; background-color: #a00000; position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%) rotate(45deg); border-radius: 0 50% 0 50%; z-index: 11; }
+        .string { position: absolute; bottom: -105px; left: 50%; transform: translateX(-50%) rotate(5deg); width: 1px; height: 100px; background-color: transparent; border-right: 2px solid #666; border-radius: 0 50% 50% 0; z-index: 1; }
+
+        /* --- POSICIÓN, COLOR Y ANIMACIÓN INDIVIDUAL DE GLOBOS (DESKTOP) --- */
+        .balloon-container:nth-child(1) { top:10vh; left: 5vw; animation: float-1 6s ease-in-out infinite alternate; }
+        .balloon-container:nth-child(1) .balloon { background: radial-gradient(circle at 40% 40%, #ffffff, #ff9999 10%, #ff0000 40%, #cc0000 80%); }
+        @keyframes float-1 { 0%, 100% { transform: translateY(0) scale(0.3) rotate(-10deg); } 50% { transform: translateY(-15px) scale(0.3) rotate(-8deg); } }
+        .balloon-container:nth-child(2) { top: 10vh; left: 15vw; animation: float-2 5.5s ease-in-out infinite alternate; }
+        .balloon-container:nth-child(2) .balloon { background: radial-gradient(circle at 40% 40%, #ffffff, #9999ff 10%, #0000ff 40%, #0000cc 80%); }
+        @keyframes float-2 { 0%, 100% { transform: translateY(0) scale(0.3) rotate(5deg); } 50% { transform: translateY(-25px) scale(0.3) rotate(3deg); } }
+        .balloon-container:nth-child(3) { top: 10vh; right: 5vw; animation: float-3 6.5s ease-in-out infinite alternate; }
+        .balloon-container:nth-child(3) .balloon { background: radial-gradient(circle at 40% 40%, #ffffff, #99ff99 10%, #00ff00 40%, #00cc00 80%); }
+        @keyframes float-3 { 0%, 100% { transform: translateY(0) scale(0.3) rotate(-3deg); } 50% { transform: translateY(-18px) scale(0.3) rotate(-5deg); } }
+        .balloon-container:nth-child(4) { top: 10vh; right: 15vw; animation: float-4 7s ease-in-out infinite alternate; }
+        .balloon-container:nth-child(4) .balloon { background: radial-gradient(circle at 40% 40%, #ffffff, #ffff99 10%, #ffff00 40%, #cccc00 80%); }
+        @keyframes float-4 { 0%, 100% { transform: translateY(0) scale(0.3) rotate(15deg); } 50% { transform: translateY(-22px) scale(0.3) rotate(18deg); } }
+        
+        .balloon-container:nth-child(5) { top: 65vh; left: 5vw; animation: float-5 5.8s ease-in-out infinite alternate; }
+        .balloon-container:nth-child(5) .balloon { background: radial-gradient(circle at 40% 40%, #ffffff, #ff99ff 10%, #ff00ff 40%, #cc00cc 80%); }
+        @keyframes float-5 { 0%, 100% { transform: translateY(0) scale(0.3) rotate(-7deg); } 50% { transform: translateY(-16px) scale(0.3) rotate(-9deg); } }
+
+        .balloon-container:nth-child(6) { top: 65vh; right: 5vw; animation: float-6 6.2s ease-in-out infinite alternate; }
+        .balloon-container:nth-child(6) .balloon { background: radial-gradient(circle at 40% 40%, #ffffff, #cc9999 10%, #cc0000 40%, #990000 80%); }
+        @keyframes float-6 { 0%, 100% { transform: translateY(0) scale(0.3) rotate(8deg); } 50% { transform: translateY(-19px) scale(0.3) rotate(6deg); } }
+
+        .balloon-container:nth-child(7) { top: 80vh; left: 15vw; animation: float-7 5s ease-in-out infinite alternate; }
+        .balloon-container:nth-child(7) .balloon { background: radial-gradient(circle at 40% 40%, #ffffff, #99ffff 10%, #00ffff 40%, #00cccc 80%); }
+        @keyframes float-7 { 0%, 100% { transform: translateY(0) scale(0.3) rotate(-15deg); } 50% { transform: translateY(-28px) scale(0.3) rotate(-18deg); } }
+
+        .balloon-container:nth-child(8) { top: 80vh; right: 15vw; animation: float-8 7.5s ease-in-out infinite alternate; }
+        .balloon-container:nth-child(8) .balloon { background: radial-gradient(circle at 40% 40%, #ffffff, #ffcc99 10%, #ffa500 40%, #cc8400 80%); }
+        @keyframes float-8 { 0%, 100% { transform: translateY(0) scale(0.3) rotate(0deg); } 50% { transform: translateY(-20px) scale(0.3) rotate(2deg); } }
+
+        .balloon-container:nth-child(9) { top: 40vh; left: 0vw; animation: float-9 6.8s ease-in-out infinite alternate; }
+        .balloon-container:nth-child(9) .balloon { background: radial-gradient(circle at 40% 40%, #ffffff, #c080c0 10%, #800080 40%, #600060 80%); }
+        @keyframes float-9 { 0%, 100% { transform: translateY(0) scale(0.3) rotate(12deg); } 50% { transform: translateY(-17px) scale(0.3) rotate(10deg); } }
+
+        .balloon-container:nth-child(10) { top: 40vh; right: 0vw; animation: float-10 5.3s ease-in-out infinite alternate; }
+        .balloon-container:nth-child(10) .balloon { background: radial-gradient(circle at 40% 40%, #ffffff, #ffe0e6 10%, #ffc0cb 40%, #cc99a4 80%); }
+        @keyframes float-10 { 0%, 100% { transform: translateY(0) scale(0.3) rotate(-5deg); } 50% { transform: translateY(-23px) scale(0.3) rotate(-7deg); } }
+ 
+        /* --- ESTILOS DEL MODAL (PARA LOS GLOBOS) --- */
+        #content-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        #content-modal.hidden { display: none; }
+        #modal-content { background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); max-width: 90%; min-width: 200px; text-align: center; position: relative; color: #333; font-size: 1.2em; font-weight: bold; }
+        #close-btn { display: none; } 
+        #puppy-image { max-width: 100%; max-height: 40vh; border-radius: 8px; margin-top: 10px; }
+        #message-text.hidden, #puppy-image.hidden { display: none; }
+
+
+        /* -------------------------------------------------------------------------- */
+        /* --- MEDIA QUERIES PARA PANTALLAS PEQUEÑAS (MÓVILES) --- */
+        /* -------------------------------------------------------------------------- */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 30px; 
+                margin-bottom: 20px;
+                margin-top: 20px;
+            }
+            #gift-section {
+                padding-top: 50px; 
+                
+            }
+            .regalo {
+                margin-top: 0; 
+            }
+            .regalo img {
+                width: 150px !important; 
+            }
+            #gift-message-card {
+                max-width: 80vw;
+                max-height: 90vh;
+                transform: translate(-50%, -50%); 
+                font-size: 0.8em; 
+                padding: 10px;
+                overflow-y: scroll;
+                background: linear-gradient(135deg, #f0f0f0 0%, #ffccd5 100%);
+                box-shadow: 0 0 40px black;
+            }
+            #gift-message-card .card-title {
+                font-size: 90%;
+                font-family: delius;
+            }
+            #gift-message-card img {
+                max-width: 60px; 
+                background: linear-gradient(135deg, #f0f0f0 0%, #ffccd5 100%);
+                box-shadow: 0 0 40px black;
+            }
+            .balloon-container {
+                transform: scale(0.15); 
+            }
+            .balloon-container:nth-child(1) { top:10vh; left: 8vw; }
+            .balloon-container:nth-child(2) { top: 10vh; left: 10vw; }
+            .balloon-container:nth-child(3) { top: 18vh; right: 2vw; }
+            .balloon-container:nth-child(4) { top: 10vh; right: 10vw; }
+            .balloon-container:nth-child(5) { top: 50vh; left: 1vw; }
+            .balloon-container:nth-child(6) { top: 50vh; right: 2vw; }
+            .balloon-container:nth-child(7) { top: 60vh; left: -8vw; }
+            .balloon-container:nth-child(8) { top: 60vh; right: -5vw; }
+            .balloon-container:nth-child(9) { top: 35vh; left: -8vw; } 
+            .balloon-container:nth-child(10) { top: 35vh; right: -5vw; } 
+            #modal-content {
+                max-width: 80%;
+                padding: 15px;
+                font-size: 1em;background: linear-gradient(135deg, #f0f0f0 0%, #ffccd5 100%);
+                box-shadow: 0 0 40px black;
+            }
+            #puppy-image {
+                max-height: 30vh;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="balloon-section">
+        <h1>🎉 ¡HOLA YERA, FELIZ CUMPLEAÑOS🎉! </h1>
+        <div class="balloon-container" data-content-type="text"><div class="balloon"></div><div class="knot"></div><div class="string"></div></div>
+        <div class="balloon-container" data-content-type="image"><div class="balloon"></div><div class="knot"></div><div class="string"></div></div>
+        <div class="balloon-container" data-content-type="text"><div class="balloon"></div><div class="knot"></div><div class="string"></div></div>
+        <div class="balloon-container" data-content-type="image"><div class="balloon"></div><div class="knot"></div><div class="string"></div></div>
+        <div class="balloon-container" data-content-type="text"><div class="balloon"></div><div class="knot"></div><div class="string"></div></div>
+        <div class="balloon-container" data-content-type="image"><div class="balloon"></div><div class="knot"></div><div class="string"></div></div>
+        <div class="balloon-container" data-content-type="text"><div class="balloon"></div><div class="knot"></div><div class="string"></div></div>
+        <div class="balloon-container" data-content-type="image"><div class="balloon"></div><div class="knot"></div><div class="string"></div></div>
+        <div class="balloon-container" data-content-type="text"><div class="balloon"></div><div class="knot"></div><div class="string"></div></div>
+        <div class="balloon-container" data-content-type="image"><div class="balloon"></div><div class="knot"></div><div class="string"></div></div>
+    </div>
+
+    <div id="gift-section">
+        <div class="regalo" onclick="handleGiftClick()">
+            <img src="regalocerrado.png" alt="Regalo" class="img-fluid" width="200" id="regalo-cerrado">
+            <div class="card" id="gift-message-card" style="display: none;">
+                <div class="card-body">
+                    <h5 class="card-title">¡FELIZ CUMPLEAÑOS🎉.</h5>
+                    <p class="card-text">
+                        ¡ Hola Yera ! Queria felicitarte hoy en tu cumpleaños, espero de corazon que te la estes pasando
+                        genial hoy en tu dia. Eres una  gran amiga y una persona increible llena de virtudes
+                         con la que siempre es un gusto platicar. Espero que este año este lleno de cosas maravillosas 
+                         para ti.
+</p>
+                        <p>
+                        Disculpa si tal vez te resulta muy abrumador el que haya usado tantas imagenes tuyas, pero me parecio
+                        importante agregarlas ya que son parte de tu historia y todas ellas reprecentan alguna etapa de tu vida
+                         y han formado a la yeraldi que hoy cumple 20 añitos.
+                    </p>
+                    <img src="FORK1.png" class="img-fluid mt-2" alt="Flork">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="content-modal" class="hidden">
+        <div id="modal-content">
+            <span id="close-btn">&times;</span>
+            <p id="message-text"></p>
+            <img id="puppy-image" src="" alt="Imagenes de yera " class="hidden">
+        </div>
+    </div>
+
+    <script>
+        // --- Funciones Globales para Confetti ---
+        function launchConfetti(originX = 0.5, originY = 0.6) {
+            confetti({
+                particleCount: 400,
+                spread: 190,
+                origin: { x: originX, y: originY }
+            });
+        }
+
+        // --- Lógica del Regalo ---
+        let giftOpened = false;
+        function handleGiftClick() {
+            if (giftOpened) return; 
+            
+            // Simplemente mostramos el mensaje y lanzamos el confetti
+            $("#gift-message-card").fadeIn(); 
+
+            // Lanzar confetti desde el centro de la pantalla (donde está el regalo)
+            launchConfetti(0.5, 0.5); 
+            
+            giftOpened = true;
+        }
+
+        // --- Lógica de los Globos (SIN CAMBIOS) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const textMessages = ["¡feliz cumple. Que todo lo bueno llegue en esta vuelta al sol!", "¡Feliz Cumple Yera!", "¡Felicidades!", "¡feliz Cumpleaños A La Futura Psicologa!", "¡Feliz cumpleaños!, Que hoy sea tan increible como tu", "Espero que todos tus sueños se cumplan este año"];
+            const puppyImages = [
+                "yera1.jpg", // URL de la imagen 1
+                "yera2.jpg",
+                "yerachiquita1.jpg",
+                "yera4.jpg",
+                "yerachiquita3.jpg"
+            ];
+            
+            const modal = document.getElementById('content-modal');
+            const messageText = document.getElementById('message-text');
+            const puppyImage = document.getElementById('puppy-image');
+            const balloonContainers = document.querySelectorAll('#balloon-section .balloon-container'); 
+            
+            let closeTimer;
+
+            const closeModal = () => {
+                modal.classList.add('hidden');
+                messageText.classList.add('hidden');
+                puppyImage.classList.add('hidden');
+                clearTimeout(closeTimer);
+            };
+
+            const openModal = (type) => {
+                clearTimeout(closeTimer);
+                messageText.classList.add('hidden');
+                puppyImage.classList.add('hidden');
+
+                if (type === 'text') {
+                    const randomMessage = textMessages[Math.floor(Math.random() * textMessages.length)];
+                    messageText.textContent = randomMessage;
+                    messageText.classList.remove('hidden');
+                } else if (type === 'image') {
+                    const randomImage = puppyImages[Math.floor(Math.random() * puppyImages.length)];
+                    if (randomImage) { 
+                        puppyImage.src = randomImage;
+                        puppyImage.classList.remove('hidden');
+                    } 
+                }
+
+                modal.classList.remove('hidden');
+                closeTimer = setTimeout(closeModal, 2000); 
+            };
+
+            // Asignar el evento click a cada globo
+            balloonContainers.forEach((container, index) => {
+                const contentType = (index % 2 === 0) ? 'text' : 'image'; 
+                container.dataset.contentType = contentType;
+                
+                container.addEventListener('click', (event) => {
+                    const clickX = event.clientX / window.innerWidth;
+                    const clickY = event.clientY / window.innerHeight;
+
+                    openModal(contentType);
+                    launchConfetti(clickX, clickY); 
+                });
+            });
+        });
+    </script>
+</body>
+</html>
